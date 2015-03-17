@@ -1,0 +1,582 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.util.InputMismatchException;
+import java.util.Random;
+import java.util.Scanner;
+
+public class StartHere {
+	static final int noOfNodes = 64;
+	static final int sinkNode = 63;	//use index of the target/destination node
+	static final int popuSize = 50;	//(int) Math.pow(2, 20);	//2^31;	// Population size
+	static final int generationCount = 40;	// Number of generations
+
+	/* GA parameters */
+	static final double crossoverRate = 0.8;
+	static final double mutationRate = 0.3;
+	static final int tournamentSize = 15;//(popuSize/noOfNodes);	//5
+	static final boolean elitism = true;	//save best two across generations
+
+	public static void main(String[] args) {
+		int i,j, a = 0, b;
+		int[] route;
+		double actEnrg = 0, actDelay = 0, costDelay = 0, costEnrg = 0, dist = 0;
+		String dataFilesPath = "D://College//Project//2//UD//Data_Set_6_64N//";
+
+		/* variables required for graphs */
+		String filePath = "D://Matlab//Project//2//1//SOGA//";
+		double sum; 
+		double[] bestFitnessEachGen = new double[generationCount];
+		double[] avgFitnessEachGen = new double[generationCount];
+		/* vars for Dijkstra graph */
+		double[] djDeley = new double[generationCount];
+		double[]  djEnrg = new double[generationCount];
+		
+		/*
+		int noOfNodes = 320;
+		//int sinkNode = 319;	//use index of the target/destination node
+		int popuSize = 65535;	//(int) Math.pow(2, 20);	//2^31;	// Population size
+		int generationCount = 1024;	// Number of generations
+		 */
+
+		/* GA parameters */
+		/*//private static final double crossoverRate = 0.8;
+		final double crossoverRate = 0.8;
+		final double mutationRate = 0.08;
+		final int tournamentSize = 5;
+		final boolean elitism = true;	//save best two across generations
+		 */
+
+		int adjMat[][] = new int [noOfNodes][noOfNodes];
+		double costMatDelay[][] = new double [noOfNodes][noOfNodes];
+		double costMatEnrg[][] = new double [noOfNodes][noOfNodes];
+		double actMatDelay[][] = new double [noOfNodes][noOfNodes];
+		double actMatEnrg[][] = new double [noOfNodes][noOfNodes];
+		double S[][] = new double [noOfNodes][noOfNodes];	//Proposed tuning parameter  can be set to local values for each node pair
+		double distMat[][] = new double [noOfNodes][noOfNodes];
+
+		// Read the required data from text files
+		try {
+			//Read the network information and store in adjacency matrix
+			String netInfFile=new String(dataFilesPath + "Network_Data.txt");
+			Scanner netInfData = new Scanner(new FileInputStream(netInfFile));
+
+			String costEnergyFile=new String(dataFilesPath + "Energy_Cost_Data.txt");
+			Scanner costEnergyData = new Scanner(new FileInputStream(costEnergyFile));
+
+			String costDelayFile=new String(dataFilesPath + "Delay_Cost_Data.txt");
+			Scanner costDelayData = new Scanner(new FileInputStream(costDelayFile));
+
+			String actEnergyFile=new String(dataFilesPath + "Energy_Actual_Data.txt");
+			Scanner actEnergyData = new Scanner(new FileInputStream(actEnergyFile));
+
+			String actDelayFile=new String(dataFilesPath + "Delay_Actual_Data.txt");
+			Scanner actDelayData = new Scanner(new FileInputStream(actDelayFile));
+
+			String tuningInfFile=new String(dataFilesPath + "Tuning_Parameter.txt");
+			Scanner tuningData = new Scanner(new FileInputStream(tuningInfFile));
+
+			String distFile=new String(dataFilesPath + "Distances_Between_Nodes.txt");
+			Scanner distData = new Scanner(new FileInputStream(distFile));
+
+
+			//netInfData.nextLine();	//Ignores the first line
+			for (i = 0; i < noOfNodes; i++){
+				for (j = 0; j < noOfNodes; j++){
+					adjMat[i][j] = netInfData.nextInt();
+					//System.out.print(adjMat[i][j] + " ");
+				}
+				//System.out.println();
+				netInfData.nextLine();
+			}
+
+			//costEnergyData.nextLine();	//Ignores the first line
+			for (i = 0; i < noOfNodes; i++){
+				for (j = 0; j < noOfNodes; j++){
+					costMatEnrg[i][j] = costEnergyData.nextDouble();
+				}
+				costEnergyData.nextLine();
+				//System.out.println(N_i + ", " + N_j + ", " + E_i + "," + D_i);
+			}
+
+			//costDelayData.nextLine();	//Ignores the first line
+			for (i = 0; i < noOfNodes; i++){
+				for (j = 0; j < noOfNodes; j++){
+					costMatDelay[i][j] = costDelayData.nextDouble();
+					//System.out.print(costMatDelay[i][j] + " ");
+				}
+				//System.out.println();
+				costDelayData.nextLine();
+				//System.out.println(N_i + ", " + N_j + ", " + E_i + "," + D_i);
+			}
+
+			//actEnergyData.nextLine();	//Ignores the first line
+			for (i = 0; i < noOfNodes; i++){
+				for (j = 0; j < noOfNodes; j++){
+					actMatEnrg[i][j] = actEnergyData.nextDouble();
+				}
+				actEnergyData.nextLine();
+				//System.out.println(N_i + ", " + N_j + ", " + E_i + "," + D_i);
+			}
+
+			//actDelayData.nextLine();	//Ignores the first line
+			for (i = 0; i < noOfNodes; i++){
+				for (j = 0; j < noOfNodes; j++){
+					actMatDelay[i][j] = actDelayData.nextDouble();
+				}
+				actDelayData.nextLine();
+				//System.out.println(N_i + ", " + N_j + ", " + E_i + "," + D_i);
+			}
+
+
+			//tuningData.nextLine();	//Ignores the first line
+			for (i = 0; i < noOfNodes; i++){
+				for (j = 0; j < noOfNodes; j++){
+					S[i][j] = tuningData.nextDouble();
+				}
+				tuningData.nextLine();
+				//System.out.println(N_i + ", " + N_j + ", " + E_i + "," + D_i);
+			}
+
+			for (i = 0; i < noOfNodes; i++){
+				for (j = 0; j < noOfNodes; j++){
+					distMat[i][j] = distData.nextDouble();
+				}
+				distData.nextLine();
+				//System.out.println(N_i + ", " + N_j + ", " + E_i + "," + D_i);
+			}
+
+			netInfData.close();
+			costEnergyData.close();
+			costDelayData.close();
+			actEnergyData.close();
+			actDelayData.close();
+
+			tuningData.close();
+			distData.close();
+		}catch (FileNotFoundException expFile) {
+			System.out.println("Files containing Network Information are not found. "); 
+			expFile.printStackTrace();
+		}catch(InputMismatchException expIn){
+			System.out.println("Files containing Network Information have different format/type. "); 
+			expIn.printStackTrace();
+		}
+
+		// Create an initial population
+		Population myPop = new Population(popuSize, true, adjMat,costMatDelay, costMatEnrg, S, noOfNodes, sinkNode);
+		//myPop.setNetworkPropInPop(adjMat, costMatDelay, costMatEnrg, S);
+
+		myPop.sortByFitness();	// first use of sort
+		// Evolve our population until we reach a desired solution
+		for( i = 0; i < generationCount; i++){
+			myPop = evolvePopulation(myPop);
+			
+			myPop.sortByFitness();
+			bestFitnessEachGen[i] = myPop.getFitnessOfFittest();			
+			avgFitnessEachGen[i] = myPop.getAvgFitnessOfPop();
+			
+			sum = 0.0;
+			for(j = 0; j<(popuSize/5);j++)
+				sum += myPop.getIndividual(j).getDelayCost();			
+			djDeley[i] = (sum/((popuSize/5)));
+			sum = 0.0;
+			for(j = 0; j<(popuSize/5);j++)
+				sum += myPop.getIndividual(j).getEnrgCost();
+			djEnrg[i] = (sum/((popuSize/5)));
+			/*
+			djDeley[i] = myPop.getIndividual(0).getDelayCost();
+			djEnrg[i] = myPop.getIndividual(0).getEnrgCost();
+			
+			/* for percentage  completed */
+			dist = (((float)i)/generationCount)*100;
+			if( ( ( ((int)dist) % 1) == 0) && (a != (int)dist)){
+				a = (int)dist;
+				System.out.println(a + "% Done ... ");
+			}
+		}
+		System.out.println("Complete");
+		System.out.println("Using MOO by transforming into SOGA : ");
+		System.out.println("Generation no : " + i);		//initial popu -> 0th, next is 1st gen.
+		System.out.println("Poopulation size : " + myPop.getPopSize());
+		myPop.sortByFitness();
+		System.out.println("Route chromosome: " );
+		myPop.getFittest().printChromosome();
+		System.out.println("Fitness : " + myPop.getFittest().getFitness());
+
+
+		route = myPop.getFittest().getChromosome();
+		for( i = 0; i < (route.length - 1) ; i++){
+			a = route[i];
+			b = route[i+1];
+			//routeCost = s*costMatDelay[a][b] + (1.0 - s)*costMatEnrg[a][b];
+			costDelay += costMatDelay[a][b];
+			costEnrg += costMatEnrg[a][b];
+			actDelay += actMatDelay[a][b];
+			actEnrg += actMatEnrg[a][b];
+			dist += distMat[a][b];
+		}
+
+		System.out.print("Delay in sec. : " );
+		System.out.println( actDelay );
+		System.out.print("Energy in Kilo Joule : " );
+		System.out.println( actEnrg );
+		System.out.print("Total : " );
+		System.out.println((actDelay + actEnrg));
+
+		System.out.print("Delay Cost : " );
+		System.out.println( costDelay );
+		System.out.print("Energy Cost : " );
+		System.out.println( costEnrg );
+		System.out.print("Total Cost : " );
+		System.out.println((costDelay + costEnrg) );
+		System.out.print("Total Length of this Route : " );
+		System.out.println(dist);
+
+		/*
+		for( i = 0; i < generationCount; i++)
+			System.out.println(bestFitnessEachGen[i]);
+		 */
+		
+		
+		
+		/* write to files for graph */
+		BufferedWriter writer = null;
+		try {
+			//create a temporary file
+			File fileName;
+			/*fileName = new File(filePath + "Fitness_vs_Gen.txt");
+			writer = new BufferedWriter(new FileWriter(fileName));
+			
+			for( i = 0; i < generationCount; i++)
+				writer.write(Double.toString(bestFitnessEachGen[i]) + " ");			
+			writer.write("\n");			
+			for( i = 0; i < generationCount; i++)
+				writer.write(Double.toString(avgFitnessEachGen[i]) + " ");			
+			writer.flush();
+			try {
+				// Close the writer regardless of what happens...
+				writer.close();
+			} catch (Exception e) {e.printStackTrace();}
+			
+			/* Dijkstra */
+			//fileName = new File(filePath + "Temp.txt");
+			fileName = new File(filePath + "Dijkstra_Comparision.txt");
+			//fileName = new File(filePath + "Without_S.txt");
+			//fileName = new File(filePath + "Values_For_Low_S.txt");
+			//fileName = new File(filePath + "Values_For_High_S.txt");
+			writer = new BufferedWriter(new FileWriter(fileName));
+			for( i = 0; i < generationCount; i++)
+				writer.write(Double.toString(djDeley[i]) + " ");			
+			writer.newLine();
+			for( i = 0; i < generationCount; i++)
+				writer.write(Double.toString(djEnrg[i]) + " ");
+			writer.newLine();
+			for( i = 0; i < generationCount; i++)
+				writer.write(Double.toString((djDeley[i] + djEnrg[i])) + " ");
+			
+			writer.flush();
+			try {
+				writer.close();
+			} catch (Exception e) {e.printStackTrace();}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+
+		/*
+		route = myPop.getFittest().toString();
+		routeStr = "1";
+		for( i = 1; i < noOfNodes; i++){
+			if(route.substring(i, i+1).equals("1")){
+				routeStr += "-"+ (i+1);
+			}
+		}
+		System.out.println("Route : " + routeStr);
+		 */
+
+	}
+
+
+	//Algorithm
+	public static Population evolvePopulation(Population pop) {
+		int i, elitismOffset;	//no of elite chromosomes
+
+		/* GA parameters */
+		/*final double crossoverRate = 0.8;
+		final double mutationRate = 0.1;
+		final boolean elitism = true;	//save best two across generations
+		 */
+
+		Population newPopulation = new Population(pop.getPopSize());
+		newPopulation.setNetworkPropInPop(pop.getAdjMat(),pop.getCostMatDelay(), pop.getCostMatEnrg(), pop.getS());
+
+		///###############pop.sortByFitness();		//First use of sort
+		// Crossover population
+		if (elitism) {
+			elitismOffset = (pop.getPopSize()/4);	// 1/4 of the total popu (512/4)
+			//System.out.println(" hulla");
+		} else {
+			elitismOffset = 0;
+		}
+
+		// Keep our best individual
+		if (elitism) {
+			//pop.sortByFitness();		//First use of sort
+			//pop.sortByFitness(pop.getPopSize());		//First use of sort
+			//newPopulation.setIndividual(0, pop.getFittest());
+			//newPopulation.setIndividual(1, pop.getSecondFittest());
+			for( i = 0; i < elitismOffset; i++){	//No of elite chromosomes for next gen
+				//System.out.println("In StartHere.evolve.ifElitism :i : "+ i + " " + pop.getBySortedFitness(i).getFitness());
+				newPopulation.setIndividual(i, pop.getBySortedFitness(i));
+				/*System.out.println(pop.getBySortedFitness(i).fitness + " #1");
+				System.out.println(" hulla");*/
+				//System.out.println("Fitness : "+ pop.getBySortedFitness(i).getFitness());
+				//System.out.println( "String : " + pop.getBySortedFitness(i).getChromosome().toString());
+			}			
+		}
+
+
+
+		// Loop over the population size and create new individuals with
+		// crossover, select rest (except elites) and crossover in them
+		for ( i = elitismOffset; i < pop.getPopSize(); i+=2) {
+			//for ( i = 0; i < pop.getPopSize(); i+=2) {
+			Individual indiv1 = tournamentSelection(pop);
+			Individual indiv2 = tournamentSelection(pop);
+			////Individual indiv1 = pop.getIndividual(i - elitismOffset);
+			////Individual indiv2 =  pop.getIndividual(i+1 - elitismOffset);
+			///Individual indiv1 = pop.getBySortedFitness(i);
+			///Individual indiv2 =  pop.getBySortedFitness(i+1);
+			if (Math.random() <= crossoverRate) {
+				//System.out.println("Before Cross 1: ");
+				Individual newIndiv1 = crossover(indiv1, indiv2, true);			//false for first child i.e.,  [part of parent1][part of parent2]
+				Individual newIndiv2 = crossover(indiv1, indiv2, false);		//true for first child i.e.,  [part of parent2][part of parent1]
+				/*	for synchronization if overlap problem occurs
+				Individual newIndiv1 = new Individual();// = crossover(indiv1, indiv2, true);			//false for first child i.e.,  [part of parent1][part of parent2]
+				Individual newIndiv2 = new Individual();// = crossover(indiv1, indiv2, false);		//true for first child i.e.,  [part of parent2][part of parent1]
+				synchronized (newIndiv1) {
+					newIndiv1 = crossover(indiv1, indiv2, true);
+				}
+				synchronized (newIndiv2) {
+					newIndiv2 = crossover(indiv1, indiv2, false);
+				}
+				 */
+				newPopulation.setIndividual(i, newIndiv1);
+				newPopulation.setIndividual(i+1, newIndiv2);
+				//System.out.println("After Cross 1: ");
+			}else{
+				newPopulation.setIndividual(i, indiv1);
+				newPopulation.setIndividual(i+1, indiv2);
+			}
+			//System.out.println("After Cross 2: ");
+		}
+
+		// MUTATION (elites are not subject to this.)	mutate in the new generation
+		//mutationRate = 0.1;
+		for ( i = elitismOffset; i < newPopulation.getPopSize(); i++) {
+			//for ( i = 0; i < newPopulation.getPopSize(); i++) {
+			if ((Math.random() <= mutationRate) && (newPopulation.getIndividual(i).getChromosomeLength() > 2))
+				newPopulation.setIndividual(i, mutate(newPopulation.getIndividual(i), newPopulation.getAdjMat()));
+		}
+
+		return newPopulation;
+	}
+
+
+	// Crossover individuals
+	private static Individual crossover(Individual indiv1, Individual indiv2,boolean parent_1) {
+		int i, j, count=0, crossSite = -1, lenNew, len1 = indiv1.getChromosome().length, len2 = indiv2.getChromosome().length;
+		int[] tempArr1, tempArr2, tempArrRearr1, tempArrRearr2, newGenes;
+		int[] chrm1 = indiv1.getChromosome();
+		int[] chrm2 = indiv2.getChromosome();
+		Random randInt = new Random();
+		Individual newIndiv = new Individual();
+
+		tempArr1 = new int[len1>len2?len1:len2];
+		tempArr2 = new int[tempArr1.length];
+		for(i = 0; i<tempArr1.length; i++){
+			tempArr1[i] = -1;
+			tempArr2[i] = -1;
+		}
+
+		for(i = 1; i<(len1-1); i++){		//to avoid first and last points
+			for(j = 1; j<(len2-1); j++){
+				if(chrm1[i] == chrm2[j]){
+					tempArr1[i] = i;
+					tempArr2[i] = j;
+					//System.out.println("If Equal : " + tempArr1[i] + " " + tempArr2[i]);
+					count++;
+				}
+			}
+		}
+		//potentialCrossoverSites = new int[count];
+		/*
+		count = 0;
+		for(i = 0; i<tempArr.length; i++){
+			if(tempArr[i] != -1){
+				potentialCrossoverSites[count] = tempArr[i];
+				count++;
+			}
+		}
+		 */
+		if(count != 0){
+			crossSite = randInt.nextInt(count);	//+1 is used to consider the last occurrence too
+			//System.out.println(" Site : " + crossSite);
+			tempArrRearr1 = new int[count];
+			tempArrRearr2 = new int[count];
+
+			count = 0;
+			for(i = 0; i<tempArr1.length; i++){
+				if(tempArr1[i] != -1){
+					tempArrRearr1[count] = tempArr1[i];
+					tempArrRearr2[count] = tempArr2[i];
+					count++;
+				}
+				/*
+				if(tempArr1[i] != -1){
+					tempArrRearr1[count1] = tempArr1[i];
+					count1++;
+				}
+				if(tempArr1[i] != -1){
+					tempArrRearr2[count2] = tempArr2[i];
+					count2++;
+				}
+				 */
+			}
+
+			/*
+			System.out.println("Before Crossover : Parent is 1 - " + parent_1 );
+			System.out.println("1 : ");
+			indiv1.printChromosome();
+			System.out.println("2 : ");
+			indiv2.printChromosome();
+			 */
+			//extra = (tempArrRearr1[crossSite] - tempArrRearr2[crossSite]);
+			count = 0;
+			if(parent_1){
+				//System.out.println("CS1 : " + tempArrRearr1[crossSite]);
+				//lenNew = crossSite + (len2 - crossSite);
+				lenNew = tempArrRearr1[crossSite] + Math.abs(len2 - tempArrRearr2[crossSite]);
+				//System.out.println("NewLen : " + lenNew);
+				//lenNew = crossSite + (len2 - tempArrRearr2[crossSite]);
+				newGenes = new int[lenNew];
+				for(i = 0; i<tempArrRearr1[crossSite] ; i++){
+					//newGenes[count] = indiv1.getGene(i);
+					newGenes[count] = chrm1[i];
+					count++;
+				}
+				//for(i = (tempArrRearr1[crossSite] + extra); i< len2 ; i++){
+				for(i = tempArrRearr2[crossSite]; i< len2 ; i++){
+					//newGenes[count] = indiv2.getGene(i);
+					newGenes[count] = chrm2[i];
+					count++;
+				}
+				//System.out.println("CS1.1 : " + tempArrRearr1[crossSite]);
+			}
+			else{
+				//lenNew = crossSite + (len1 - crossSite);
+				//System.out.println("CS2 : " + tempArrRearr2[crossSite]);
+				lenNew = tempArrRearr2[crossSite] + Math.abs(len1 - tempArrRearr1[crossSite]);
+				//System.out.println("NewLen : " + lenNew);
+				//lenNew = crossSite + (len1 - tempArrRearr1[crossSite]);
+				newGenes = new int[lenNew];
+				for(i = 0; i<tempArrRearr2[crossSite] ; i++){
+					//newGenes[i] = indiv2.getGene(i);
+					newGenes[count] = chrm2[i];
+					count++;
+				}
+				for(i = tempArrRearr1[crossSite]; i< len1 ; i++){
+					//newGenes[i] = indiv1.getGene(i);
+					newGenes[count] = chrm1[i];
+					count++;
+				}
+			}
+			/*
+			System.out.println("Before Crossover : Parent is 1 - " + parent_1 );
+			System.out.println("1 : ");
+			indiv1.printChromosome();
+			System.out.println("2 : ");
+			indiv2.printChromosome();
+			 */
+			//System.out.println("After Crossover");
+		}else{
+			if(parent_1)
+				newGenes = chrm1;
+			else
+				newGenes = chrm2;
+		}
+
+		/*
+		System.out.println("Before Crossover : Parent is 1 - " + parent_1 );
+		System.out.println("1 : ");
+		indiv1.printChromosome();
+		System.out.println("2 : ");
+		indiv2.printChromosome();
+		System.out.println("After Crossover");
+		 */
+
+		newIndiv.setChromosome(newGenes);
+		//newIndiv.printChromosome();
+
+		return(newIndiv);
+	}
+
+
+	// Mutate an individual
+	private static Individual mutate(Individual indivToMutate, int[][] adjMat) {
+		// Select any gene at random and mutate/flip it
+		int i, mutatedGene, randInt, newLen, count = 0;
+		int[] mutatedChromosome, tempCh1, tempCh2;
+		Random rand = new Random();
+		//////randInt = rand.nextInt(indivToMutate.getChromosomeLength() -2) + 1;		// -2 to avoid the first and last node i.e., 0-30 and	+1 to avoid the first node i.e., 1-30
+		randInt = rand.nextInt(indivToMutate.getChromosomeLength() -2) + 1;
+		mutatedGene = indivToMutate.getGene(randInt);
+		tempCh1 = new int[randInt];
+		for( i = 0; i < (randInt-1); i++)
+			tempCh1[i] = indivToMutate.getGene(i);
+
+		indivToMutate.setAdjMat(adjMat);
+		tempCh2 = indivToMutate.getRouteFromNode(mutatedGene,adjMat.length,sinkNode);
+		newLen = (randInt ) + tempCh2.length;
+		mutatedChromosome = new int[newLen];
+		for( i = 0; i < randInt; i++)
+			mutatedChromosome[i] = indivToMutate.getGene(i);//tempCh1[i];
+		for( i = randInt; i < newLen; i++){
+			mutatedChromosome[i] = tempCh2[count];
+			count++;
+		}
+
+		////System.out.println("Before Mutation, mutation node " + mutatedGene);
+		/////indivToMutate.printChromosome();
+		indivToMutate.setChromosome(mutatedChromosome);
+		indivToMutate.removeLoops();
+		////System.out.println("After Mutation");
+		////indivToMutate.printChromosome();
+		return (indivToMutate);
+	}
+
+	// Select individuals for crossover
+	private static Individual tournamentSelection(Population pop) {
+		int i, randomId, tournamentSize = 5;
+		Individual fittest;
+		// Create a tournament population
+		Population tournament = new Population(tournamentSize);
+		tournament.setNetworkPropInPop(pop.getAdjMat(),pop.getCostMatDelay(), pop.getCostMatEnrg(), pop.getS());
+		// For each place in the tournament get a random individual
+		for (i = 0; i < tournamentSize; i++) {
+			randomId = (int) (Math.random()*pop.getPopSize());
+			tournament.setIndividual(i, pop.getIndividual(randomId));
+		}
+		//Sort by fitness
+		tournament.sortByFitness();
+		//tournament.sortByFitness(tournamentSize);
+		// Get the fittest
+		fittest = tournament.getFittest();
+		return fittest;
+	}
+}
