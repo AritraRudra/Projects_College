@@ -1,0 +1,36 @@
+// original data 
+
+S=0.5(all)
+
+
+
+S=0.85(all)
+Using MOO by transforming into SOGA : 
+Generation no : 20
+Poopulation size : 8
+Route chromosome: 
+1 58 11 43 30 50 12 8 64 
+Fitness : 3840.6
+Delay Cost : 3537.0
+Energy Cost : 5561.0
+Total Cost : 9098.0
+Total Length of this Route : 661.8819999999998
+
+
+S=0.15(all)
+
+
+
+S=0.8(all) and node 53->64 is 0.05
+
+
+
+S=0.15(all) and node 53->64 is 0.95
+
+
+
+
+// till here
+
+// data for graphs
+

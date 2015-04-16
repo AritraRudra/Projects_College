@@ -1,0 +1,106 @@
+// original data 
+
+S=0.5(all)
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 53 31 11 41 60 64 
+Fitness : 2713.0
+Delay Cost : 3149.0
+Energy Cost : 2277.0
+Total Cost : 5426.0
+Total Length of this Route : 582.159
+
+
+S=0.85(all)
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 53 31 11 46 57 60 64 
+Fitness : 2235.5499999999997
+Delay Cost : 3525.0
+Energy Cost : 2008.0
+Total Cost : 5533.0
+Total Length of this Route : 662.565
+
+S=0.15(all)
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 50 37 52 28 62 30 48 64 
+Fitness : 2333.1
+Delay Cost : 2237.0
+Energy Cost : 4159.0
+Total Cost : 6396.0
+Total Length of this Route : 720.0540000000001
+
+
+S=0.85(all) and node 53->64 is 0.05
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 53 31 11 46 60 64 
+Fitness : 1721.55
+Delay Cost : 3512.0
+Energy Cost : 2029.0
+Total Cost : 5541.0
+Total Length of this Route : 643.476
+
+
+S=0.15(all) and node X->Y is 0.95
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 50 3 58 17 62 63 64 
+Fitness : 2731.7
+Delay Cost : 3053.0
+Energy Cost : 2675.0
+Total Cost : 5728.0
+Total Length of this Route : 595.14
+
+
+S=0.0(all) reduce energy / energy critical
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 53 31 11 46 24 60 64 
+Fitness : 1880.0
+Delay Cost : 4725.0
+Energy Cost : 1880.0
+Total Cost : 6605.0
+Total Length of this Route : 676.043
+
+
+S=1.0(all) reduce delay/ delay sensitive
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 50 3 47 44 48 64 
+Fitness : 2390.0
+Delay Cost : 2390.0
+Energy Cost : 3012.0
+Total Cost : 5402.0
+Total Length of this Route : 494.561
+
+// till here
+
+// data for graphs
+
+S=0.5(all)
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 10 43 9 53 64 
+Fitness : 2319.5
+Delay Cost : 1939.0
+Energy Cost : 2400.0
+Total Cost : 4639.0
+Total Length of this Route : 
