@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="Online_Exam_WAR">
+        <wb-resource deploy-path="/" source-path="/WebContent"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <property name="context-root" value="Online_Exam_WAR"/>
+        <property name="java-output-path" value="/Online_Exam_WAR/build/classes"/>
+    </wb-module>
+</project-modules>
