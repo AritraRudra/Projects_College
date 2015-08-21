@@ -1,0 +1,1 @@
+INDEX VERSION 1.126+E:\Projects\Online_Video_Chat\Under_Development\Under_Development_7\SignUp\.metadata\.plugins\org.eclipse.jdt.core

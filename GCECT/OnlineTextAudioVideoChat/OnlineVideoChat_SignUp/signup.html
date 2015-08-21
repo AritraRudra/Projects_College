@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>SIGNUP HERE</title>
+</head>
+<body>
+<script>
+function confirm(){
+	var password=document.form.passwd.value;
+	var conf_pass=document.form.con_pass.value;
+	if(!(password==conf_pass)){
+		alert("PASSWORD AND CONFIRM PASSWORD FIELDS DO NOT MATCH !");
+		return false;
+	}
+	return true;
+}
+</script>
+<table width="1280" height="687" border="0" cellspacing="2">
+  <tr>
+    <td background="DESIGN-INF/top.jpg" width="1280" height="150">		
+	</td>
+  </tr> 
+  <tr>   
+	<td height="200"><img src="DESIGN-INF/signup.jpg" width="350" height="200" align="left">
+   </td>
+  <tr>
+    <td  align="center" width="1280" height="90%">
+    <form name="form" action="SignupServlet" method="post" onSubmit="javascript:return confirm();">  	 
+			<table height="80%%" width="500" border="0" cellpadding="5" cellspacing="5" bgcolor="lightgreen">
+	    		<caption><b><u>REGISTRATION FORM</u></b></caption><br>
+		    	<tr>
+		      		<td width="140" align="right">USER NAME : </td>
+		      		<td width="140" align="center"><input type="text"  name="uname" required/></td>
+		    	</tr>
+		    	<tr>
+		      		<td width="140" align="right">FIRST NAME : </td>
+		      		<td width="140" align="center"><input type="text" name="fstname" required/></td>
+		    	</tr>
+		    	<tr>
+		      		<td width="140" align="right">LAST NAME : </td>
+		      		<td width="140" align="center"><input type="text" name="lstname" required/></td>
+		      	</tr>
+			    <tr>
+		      		<td width="140" align="right">EMAIL ADDRESS:</td>
+		      		<td width="140" align="center"> <input type="text" name="email" required/></td>
+		      	</tr>
+		    	<tr>
+		      		<td width="140" align="right">PASSWORD :</td>
+		      		<td width="140" align="center"><input type="password" name="passwd" required/></td>
+		    	</tr>
+		    	<tr>  
+		    		<td width="140" align="right">CONFIRM :</td>
+		      		<td width="140" align="center"><input type="password" name="con_pass" required/></td>
+		    	</tr>	   
+ 			</table> 
+ 		<br> 			
+		<br>
+	   <input type="submit" value="SUBMIT"/>&nbsp;
+	   <input type="reset" value="RESET"/>	
+	   </form>    	
+	</td>
+  </tr>  
+  <tr>
+    <td background="DESIGN-INF/buttom.jpg" width="1280" height="87"></td>
+  </tr>
+</table>
+</body>
+</html>
