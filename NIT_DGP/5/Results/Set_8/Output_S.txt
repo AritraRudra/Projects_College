@@ -1,0 +1,129 @@
+// original data 
+
+S=0.5(all)
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 10 43 9 53 64 
+Fitness : 2319.5
+Delay Cost : 1939.0
+Energy Cost : 2700.0
+Total Cost : 4639.0
+Total Length of this Route : 520.49
+
+
+S=0.8(all)
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 11 43 9 53 64 
+Fitness : 1905.2000000000003
+Delay Cost : 1904.0
+Energy Cost : 1910.0
+Total Cost : 3814.0
+Total Length of this Route : 520.319
+
+S=0.15(all)
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 10 8 2 9 53 64 
+Fitness : 2583.6499999999996
+Delay Cost : 2916.0
+Energy Cost : 2525.0
+Total Cost : 5441.0
+Total Length of this Route : 562.692
+
+S=0.8(all) and node 53->64 is 0.05
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 10 43 9 53 64 
+Fitness : 2231.4500000000003
+Delay Cost : 1939.0
+Energy Cost : 2700.0
+Total Cost : 4639.0
+Total Length of this Route : 520.49
+
+S=0.15(all) and node 53->64 is 0.95
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 10 8 43 9 53 64 
+Fitness : 2192.2499999999995
+Delay Cost : 2341.0
+Energy Cost : 2342.0
+Total Cost : 4683.0
+Total Length of this Route : 525.3130000000001
+
+
+// till here
+
+// data for graphs
+
+S=0.5(all)
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 10 43 9 53 64 
+Fitness : 2319.5
+Delay Cost : 1939.0
+Energy Cost : 2400.0
+Total Cost : 4639.0
+Total Length of this Route : 
+
+
+S=0.8(all)
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 11 43 9 53 64 
+Fitness : 1905.2000000000003
+Delay Cost : 2916.0
+Energy Cost : 1910.0
+Total Cost : 3814.0
+Total Length of this Route : 
+
+S=0.15(all)
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 10 8 2 9 53 64 
+Fitness : 2583.6499999999996
+Delay Cost : 1904.0
+Energy Cost : 2525.0
+Total Cost : 5441.0
+Total Length of this Route : 
+
+S=0.8(all) and node 53-64 is 0.05
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 11 43 9 63 64 
+Fitness : 2231.4500000000003
+Delay Cost : 1939.0
+Energy Cost : 2700.0
+Total Cost : 4639.0
+Total Length of this Route : 
+
+
+S=0.15(all) and node 53->64 is 0.95
+Using MOO by transforming into SOGA : 
+Generation no : 40
+Poopulation size : 128
+Route chromosome: 
+1 10 8 2 9 27 61 4 64 
+Fitness : 2192.2499999999995
+Delay Cost : 2341.0
+Energy Cost : 2342.0
+Total Cost : 4683.0
+Total Length of this Route : 

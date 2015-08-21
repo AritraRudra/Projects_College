@@ -1,0 +1,588 @@
+import java.util.Random;
+
+
+public class Individual {
+	private int  index, chromosomeLength, maxLength = 5*32;	//No of nodes = 32 hence 0-31 -> binary 00000 - 11111, 5 bits, mind that length will always be a multiple of 5
+	private double fitness = 0.0;
+	//private byte[] genes = new byte[defaultGeneLength];	//Chromosome
+	private int[] genes;// = new int[defaultGeneLength];
+	public int[][] adjMat;
+	public double[][] costMatDelay, costMatEnrg,S;
+
+
+	public Individual(){
+		//this.genes = new int[chromosomeLength];
+		this.fitness = 0.0;
+	}
+
+
+	// Create a random individual
+	public void generateChromosome(String keyword,int noOfNodes, int goalNode) {
+		int i, j, k, pos, newGene;//, noOfNodes = 32;
+		int currNode, nextNodePos, nextNode;
+		int[] tempArr1 = new int[noOfNodes];
+		int[] tempPath = new int[noOfNodes];
+		//Graph graph = new Graph(adjMat, defaultGeneLength, 0);
+		//For random generation
+		if(keyword.equals("RANDOM")){
+			boolean assigned;
+			Random rand = new Random();
+			this.chromosomeLength = rand.nextInt((noOfNodes-2)) + 2;	//min length = 2, max length = 31
+			this.genes = new int[this.chromosomeLength];
+			this.genes[0] = 0;
+			this.genes[(this.chromosomeLength - 1)] = goalNode;
+			for (i = 1; i < (this.chromosomeLength - 1) ; i++) {
+				assigned  = false;
+				while(!assigned){
+					k = i;	//position
+					nextNode = rand.nextInt(noOfNodes - 2) + 1;		//possible node nos. : 1 to 30
+					for (j = 1; j < k ; j++) {
+						if(this.genes[j] == nextNode){
+							//assigned = false;
+							break;
+						}
+					}
+					if( j == k ){
+						this.genes[k] = nextNode;
+						assigned = true;
+					}
+				}
+			}
+			//this.printChromosome();
+		}
+		else if(keyword.equals("HEURISTIC")){
+			int delThisNode, noOfNbrs = 0;
+			boolean reachedLastNode = false;
+			Random rand = new Random();
+			//Finds the nbrs of the starting node , i.e., first node
+			currNode = 0;
+			tempPath[0] = 0;
+			for (i = 0; i < noOfNodes ; i++) {
+				if(this.adjMat[currNode][i] == 1){
+					tempArr1[noOfNbrs] = i;
+					noOfNbrs++;
+				}
+			}
+
+			nextNodePos = rand.nextInt(noOfNbrs);		// returns a random number between 0 and indiv.length() (31)
+			nextNode = tempArr1[nextNodePos];
+			tempPath[1] = nextNode;
+			pos = 2;
+			while(!reachedLastNode){
+				//check if target node is reached
+				if(nextNode == goalNode){
+					reachedLastNode = true;
+					//TODO 
+					break;
+				}
+				/*
+				//avoid selecting the starting node
+				else if(nextNode == 0){
+					nextNodePos = rand.nextInt(noOfNbrs -1) + 1;
+					nextNode = tempArr1[nextNodePos];
+				}
+				 */
+				currNode = nextNode;
+				noOfNbrs = 0;
+				for (i = 0; i < noOfNodes ; i++) {
+					if(this.adjMat[currNode][i] == 1){
+						tempArr1[noOfNbrs] = i;
+						noOfNbrs++;
+					}
+				}
+				nextNodePos = rand.nextInt(noOfNbrs);
+				nextNode = tempArr1[nextNodePos];
+
+				//loop identification and removal i.e., if nextNode was encountered and added previously
+				for (i = 0; i < pos ; i++) {
+					if(tempPath[i] == nextNode){
+						//remove all after this point
+						delThisNode = tempPath[i+1];	//don't consider this node during random choosing as it may lead to the formation of loop(s) 
+						for ( j = i+1; j < pos; j++) {
+							tempPath[j] = -1;
+						}
+						noOfNbrs = 0;
+						for (k = 0; k < noOfNodes ; k++) {
+							if((this.adjMat[nextNode][k] == 1) && (k != delThisNode)){
+								tempArr1[noOfNbrs] = k;
+								noOfNbrs++;
+							}
+						}
+						nextNodePos = rand.nextInt(noOfNbrs);
+						nextNode = tempArr1[nextNodePos];
+						pos = i+1;
+						break;	//??!
+					}
+				}
+				tempPath[pos] = nextNode;				
+				pos++;				
+			}
+			//assign path as chromosome
+			this.genes = new int[pos];
+			this.chromosomeLength = pos;
+			for (i = 0; i < pos ; i++){
+				this.genes[i] = tempPath[i];
+				//System.out.println(this.genes[i]);
+				//System.out.println(tempPath[i]);
+			}
+			//reAdjustRoute(this.genes);
+			//if(this.genes[2] == 0)	//avoid selecting the starting node, i.e., node 0
+			removeLoops();
+			//printChromosome();
+		}
+		//For BFS generation
+		else if(keyword.equals("BFS")){
+			Path path = new Path(this.adjMat, noOfNodes);
+			genes = path.initilize_Get("BFS", goalNode);
+			this.chromosomeLength = genes.length;
+			/*
+			System.out.print("Route by BFS : ");
+			printChromosome();
+			*/
+		}
+		//For DFS generation
+		else {
+			Path path = new Path(this.adjMat, noOfNodes);
+			genes = path.initilize_Get("DFS", goalNode);
+			this.chromosomeLength = genes.length;
+			/*
+			System.out.print("Route by DFS : ");
+			printChromosome();
+			*/
+		}
+
+		/*
+			for (i = 0; i < size(); i++) {
+				byte gene = (byte) Math.round(Math.random());
+				genes[i] = gene;
+			}
+		 */	
+	}
+
+	//Only setters
+
+	public void setAdjMat(int[][] adjMat) {
+		this.adjMat = adjMat;
+	}
+
+	public void setCostMatDelay(double[][] costMatDelay) {
+		this.costMatDelay = costMatDelay;
+	}
+
+	public void setCostMatEnrg(double[][] costMatEnrg) {
+		this.costMatEnrg = costMatEnrg;
+	}
+
+	public void setS(double[][] S) {
+		this.S = S;
+	}
+
+	public void setNetworkProp(int[][] adjMat, double[][] costMatDelay, double[][] costMatEnrg, double[][] S) {
+		this.adjMat = adjMat;
+		this.costMatDelay = costMatDelay;
+		this.costMatEnrg = costMatEnrg;
+		this.S = S;
+	}
+
+	//Both Getters and Setters
+	public int getIndex() {
+		return (this.index);
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	public int getGene(int index) {
+		return (this.genes[index]);
+	}
+
+	public void setGene(int index, int value) {
+		this.genes[index] = value;
+		this.fitness = 0.0;
+	}
+
+	public int[] getChromosome() {
+		return (this.genes);
+	}
+
+	public void setChromosome(int[] chr) {
+		this.genes = new int [chr.length];
+		this.genes = chr;
+		this.chromosomeLength = chr.length;
+		this.fitness = 0.0;
+	}
+
+	public int getChromosomeLength(){
+		return (this.chromosomeLength);
+	}
+
+	// Use this if you want to create individuals with different gene lengths
+	public void setChromosomeLength(int length) {
+		this.chromosomeLength = length;
+	}
+	//End of Getters and Setters
+
+
+
+	public double getFitness() {
+		if (this.fitness == 0.0) {
+			this.fitness = this.calculateFitness();
+			return (this.fitness);
+		}else 
+			return (this.fitness);
+	}
+
+	public double getFitness(int[][] adjMat, double[][] costMatDelay, double[][] costMatEnrg, double[][] S) {
+		this.setNetworkProp(adjMat, costMatDelay, costMatEnrg, S);
+		if (this.fitness == 0.0) {
+			this.fitness = this.calculateFitness();
+			return (this.fitness);
+		}else 
+			return (this.fitness);
+	}
+
+	// returns route from the specified node including the supplied node		apply during mutation (4.pdf)
+	public int[] getRouteFromNode(int nodeNo, int noOfNodes, int goalNode) {
+		int i, j, k, pos, noOfNbrs = 0;
+		int nextNodePos, nextNode, route[], looplessRoute[];
+		int[] tempArr1 = new int[noOfNodes];
+		int[] tempPath = new int[noOfNodes];
+		int delThisNode;
+		boolean reachedLastNode = false;
+		Random rand = new Random();
+
+		tempPath[0] = nodeNo;
+		for (i = 0; i < noOfNodes ; i++) {
+			if(this.adjMat[nodeNo][i] == 1){
+				tempArr1[noOfNbrs] = i;
+				noOfNbrs++;
+			}
+		}		
+		nextNodePos = rand.nextInt(noOfNbrs);
+		nextNode = tempArr1[nextNodePos];
+		tempPath[1] = nextNode;
+		pos = 2;
+
+		while(!reachedLastNode){
+			if(nextNode == goalNode){
+				reachedLastNode = true;
+				//TODO 
+				break;
+			}
+			//else{
+			nodeNo = nextNode;
+			noOfNbrs = 0;
+			for (i = 0; i < noOfNodes ; i++) {
+				if(this.adjMat[nodeNo][i] == 1){
+					tempArr1[noOfNbrs] = i;
+					noOfNbrs++;
+				}
+			}
+			nextNodePos = rand.nextInt(noOfNbrs);
+			nextNode = tempArr1[nextNodePos];
+
+			//loop identification and removal i.e., if nextNode was encountered and added previously
+			for (i = 0; i < pos ; i++) {
+				if(tempPath[i] == nextNode){
+					//remove all after this point
+					delThisNode = tempPath[i+1];	//don't consider this node during random choosing as it may lead to the formation of loop(s) 
+					for ( j = i+1; j < pos; j++) {
+						tempPath[j] = -1;
+					}
+					noOfNbrs = 0;
+					for (k = 0; k < noOfNodes ; k++) {
+						if((this.adjMat[nextNode][k] == 1) && (k != delThisNode)){
+							tempArr1[noOfNbrs] = k;
+							noOfNbrs++;
+						}
+					}
+					nextNodePos = rand.nextInt(noOfNbrs);
+					nextNode = tempArr1[nextNodePos];
+					pos = i+1;
+					break;	//??!
+				}
+			}
+			tempPath[pos] = nextNode;				
+			pos++;
+		}
+
+		route = new int[pos];
+		for (i = 0; i < pos ; i++) 
+			route[i] = tempPath[i];
+		//return (route);
+
+		looplessRoute = removeLoops(route);
+		return (looplessRoute);
+	}
+
+	//removes single point loop, simpler approach
+	/*
+	public int[] reAdjustRoute(int[] oldRoute) {
+		int i, j, k, lenOld = (oldRoute.length ), lenNew, index;
+		//boolean loopMightExist = true;
+		int[] tempRoute = new int[lenOld];
+		int[] adjustedRoute;
+
+		for (k = 0; k < lenOld ; k++)
+			tempRoute[k] = -1;
+
+		for (i = 0, j=0; i < ( lenOld - j) ; i++, j++) {
+			//Find a loop
+			if(oldRoute[i] == oldRoute[lenOld-1 - j]){
+				//Eliminate the loop
+				for (k = 0; k < (i - 1) ; k++) {
+					tempRoute[k] = oldRoute[k];
+				}
+				for (k = (lenOld - j+1); k < lenOld ; k++) {
+					tempRoute[k] = oldRoute[k];
+				}
+
+			}
+		}
+
+		lenNew = 0;
+		for (k = 0; k < lenOld ; k++){
+			if(tempRoute[k] != -1)
+				lenNew++;
+		}
+		adjustedRoute = new int [lenNew];
+		index = 0;
+		for (k = 0; k < lenOld ; k++){
+			if(tempRoute[k] != -1){
+				adjustedRoute[index] = tempRoute[k];
+				index++;
+			}
+		}
+		return adjustedRoute;
+	}
+	 */
+
+	//removes all loops, complex approach can not be used before genes are set
+	//public int[] removeLoops() {
+	public void removeLoops() {
+		int i, j, k, lenOld = (this.genes.length ), index;
+		int[] tempRoute = new int[lenOld];
+		//int[] adjustedRoute;
+		int[] oldRoute = this.genes;
+		boolean loopMightExist = true;
+
+		/*
+		for (k = 0; k < lenOld ; k++)
+			tempRoute[k] = -1;
+		 */
+
+		index = tempRoute.length;
+		tempRoute = oldRoute;
+
+		while(loopMightExist){
+			//loop identification and removal from 4.pdf by searching in forward direction
+			lenOld = index;
+			oldRoute = tempRoute;
+			for ( i = 0; i < lenOld; i++) {
+				for ( j = i+1; j < lenOld; j++) {
+					//Finds a loop
+					if(oldRoute[j] == oldRoute[i]){
+						//Eliminate the loop
+						//removeLoop(oldRoute, i, j);
+						//remove every node between i and j
+						index = i+1;
+						for (k = j+1; k <lenOld ; k++) {
+							oldRoute[index]  = oldRoute[k];
+							index++;
+						}
+						for (k = 0; k <index ; k++) {
+							tempRoute[k] = oldRoute[k];
+						}
+						//System.out.println(index);
+					}
+				}
+			}
+			if(i == index)
+				loopMightExist= false;
+		}
+
+		/*
+		adjustedRoute = new int[index];
+		for ( i = 0; i < index; i++)
+			adjustedRoute[i] = tempRoute[i];
+		//return adjustedRoute;	//tempRoute;
+		 */
+
+		this.genes = new int[index];
+		this.chromosomeLength = index;
+		for ( i = 0; i < index; i++)
+			this.genes[i] = tempRoute[i];
+
+	}
+
+
+	private int[] removeLoops(int[] loopyRoute) {
+		int i, j, k, lenOld = (loopyRoute.length ), index;
+		int[] tempRoute = new int[lenOld];
+		int[] adjustedRoute;
+		int[] oldRoute = loopyRoute;
+		boolean loopMightExist = true;
+
+		/*
+		for (k = 0; k < lenOld ; k++)
+			tempRoute[k] = -1;
+		 */
+
+		index = tempRoute.length;
+		tempRoute = oldRoute;
+
+		while(loopMightExist){
+			//loop identification and removal from 4.pdf by searching in forward direction
+			lenOld = index;
+			oldRoute = tempRoute;
+			for ( i = 0; i < lenOld; i++) {
+				for ( j = i+1; j < lenOld; j++) {
+					//Finds a loop
+					if(oldRoute[j] == oldRoute[i]){
+						//Eliminate the loop
+						//removeLoop(oldRoute, i, j);
+						//remove every node between i and j
+						index = i+1;
+						for (k = j+1; k <lenOld ; k++) {
+							oldRoute[index]  = oldRoute[k];
+							index++;
+						}
+						for (k = 0; k <index ; k++) {
+							tempRoute[k] = oldRoute[k];
+						}
+						//System.out.println(index);
+					}
+				}
+			}
+			if(i == index)
+				loopMightExist= false;
+		}
+
+		adjustedRoute = new int[index];
+		for ( i = 0; i < index; i++)
+			adjustedRoute[i] = tempRoute[i];
+		return adjustedRoute;	//tempRoute;
+
+	}
+
+	/*
+	private double calculateFitness() {		//cost = fitness , i.e., higher cost is higher fitness value but we sort fitness values in non descending order 
+		int i,a,b, countOf1s, len = (this.chromosomeLength -1);
+		double myFitness = 0.0, cost_w = 500000.0, s;
+		int[] indexOf1s, temp = new int[len +1];	//Including first and last 1
+		if (this.genes[0] != 1 || this.genes[len] != 1) {
+			myFitness = 100000;
+			return (myFitness);
+		}else{
+			countOf1s = 0;
+			for( i = 0; i < (len +1) ; i++){		// Nope : to check up to 30th index, excluding the last one
+				temp[i] = -1;
+				if(this.genes[i] == 1){
+					temp[i] = i;
+					countOf1s++;
+				}
+				//System.out.print(this.genes[i]);
+				//System.out.print(chorm[i]);
+			}
+			//System.out.println();
+			indexOf1s = new int[countOf1s];
+			countOf1s = 0;
+			for( i = 0; i < (len +1) ; i++){
+				if(temp[i] != -1){
+					indexOf1s[countOf1s] = temp[i];
+					//System.out.println(indexOf1s[countOf1s]);
+					countOf1s++;
+				}
+			}
+
+			for( i = 0; i < (countOf1s -1) ; i++){		//looks OK	(countOf1s -1) 
+				a = indexOf1s[i];
+				b = indexOf1s[i+1];
+				if(adjMat[a][b] == 1){		//When there is exists an edge between a and b
+					s = 0.8;
+					cost_w = s*costMatDelay[a][b] + (1.0 - s)*costMatEnrg[a][b];
+					//cost_w = S[a][b]*costMatDelay[a][b]	+ ( 1-S[a][b] )*costMatEnrg[a][b];
+
+					cost_w = S[indexOf1s[i]][indexOf1s[i+1]]*costMatDelay[indexOf1s[i]][indexOf1s[i+1]]
+							+ ( 1-S[indexOf1s[i]][indexOf1s[i+1]] )*costMatEnrg[indexOf1s[i]][indexOf1s[i+1]];
+
+					myFitness += cost_w;
+				}
+				else{				//When there is no edge between a and b
+					s = 0.8;
+					cost_w = s*costMatDelay[a][b] + (1.0 - s)*costMatEnrg[a][b];
+					myFitness += cost_w;
+					//myFitness += 25000.0;
+					//break;
+				}
+			}
+			//System.out.println(myFitness);
+			return (myFitness);
+		}
+	}
+	 */
+
+	private double calculateFitness() {
+		int i,a,b, loopCounter = (this.chromosomeLength -1);
+		double myFitness = 0.0, cost_w = 0.0, s;
+
+		s = 0.1;	//TODO 0.1; //check it by changing s, the route changes
+		for( i = 0; i < loopCounter ; i++){
+			a = this.genes[i];
+			b = this.genes[i+1];
+			//if(adjMat[a][b] == 1){		//When there is exists an edge between a and b
+			cost_w = s*this.costMatDelay[a][b] + (1.0 - s)*this.costMatEnrg[a][b];
+			//cost_w = this.S[a][b]*this.costMatDelay[a][b] + (1.0 - this.S[a][b])*this.costMatEnrg[a][b];
+			//cost_w = this.costMatDelay[a][b] + this.costMatEnrg[a][b];
+			myFitness += cost_w;
+			/*}else	//When there is no edge between a and b
+				myFitness = Double.MAX_VALUE;*/
+		}
+
+		return myFitness;
+	}
+	
+	public double getDelayCost(){
+		int i, a, b, loopCounter = (this.chromosomeLength - 1);
+		double cost, totCost = 0.0;
+		for( i = 0; i < loopCounter ; i++){
+			a = this.genes[i];
+			b = this.genes[i+1];
+			cost = this.costMatDelay[a][b];
+			totCost += cost;
+		}
+		return (totCost);
+	}
+	
+	public double getEnrgCost(){
+		int i, a, b, loopCounter = (this.chromosomeLength - 1);
+		double cost, totCost = 0.0;
+		for( i = 0; i < loopCounter ; i++){
+			a = this.genes[i];
+			b = this.genes[i+1];
+			cost = this.costMatEnrg[a][b];
+			totCost += cost;
+		}
+		return (totCost);
+	}
+
+	public void printChromosome() {
+		int i;
+		for (i = 0; i < this.chromosomeLength ; i++) {
+			System.out.print((this.genes[i] + 1) + " ");
+		}
+		System.out.println();
+	}
+
+
+	@Override
+	public String toString() {
+		int i;
+		String geneString = "";
+		for (i = 0; i < this.chromosomeLength ; i++) {
+			geneString += getGene(i);
+		}
+		return geneString;
+	}
+}

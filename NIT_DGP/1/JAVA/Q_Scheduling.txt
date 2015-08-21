@@ -1,0 +1,14 @@
+Q scheduling
+param : buffer_size, call_duration, channel_size, waiting_time;
+
+Circular Q of size =buffer_size
+CallObj[ startTime,Duration]
+Generate new calls independently (generate a random no. , if it is divisible by 2 then new call) inside while(true)
+ //handle each call in separate thread,	//NOPE no. of thread =buff_size(reuse
+AddCall2Q
+if(q==full)
+	drop call;
+if(call duration over )
+	delCallFrmQ
+
+check time
