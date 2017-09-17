@@ -14,11 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Servlet implementation class AdminControlServlet
  */
 public class AdminControlServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LoggerFactory.getLogger(AdminControlServlet.class);
 
 	private String driver;
 	private String url;
@@ -26,14 +30,6 @@ public class AdminControlServlet extends HttpServlet {
 	private String passwd;
 	private Connection con = null;
 	private PreparedStatement pstmt = null;
-
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public AdminControlServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 
 	public void init() {
 		ServletContext context = getServletContext();

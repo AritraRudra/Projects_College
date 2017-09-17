@@ -1,53 +1,53 @@
 package login;
 
 public class AdminBean {
-	private String adminid;
-	private String fstname;
-	private String lstname;
-	private String loginid;
+	private String adminId;
+	private String firstname;
+	private String lastname;
+	private String loginId;
 
-	public String getAdminid() {
-		return adminid;
+	public String getAdminId() {
+		return adminId;
 	}
 
-	public void setAdminid(String adminid) {
-		this.adminid = adminid;
+	public void setAdminId(String adminId) {
+		this.adminId = adminId;
 	}
 
-	public String getFstname() {
-		return fstname;
+	public String getFirstname() {
+		return firstname;
 	}
 
-	public void setFstname(String fstname) {
-		this.fstname = fstname;
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
 	}
 
-	public String getLstname() {
-		return lstname;
+	public String getLastname() {
+		return lastname;
 	}
 
-	public void setLstname(String lstname) {
-		this.lstname = lstname;
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
 	}
 
-	public String getLoginid() {
-		return loginid;
+	public String getLoginId() {
+		return loginId;
 	}
 
-	public void setLoginid(String loginid) {
-		this.loginid = loginid;
-	}
-
-	public AdminBean(String adminid, String fstname, String lstname, String loginid) {
-		super();
-		this.adminid = adminid;
-		this.fstname = fstname;
-		this.lstname = lstname;
-		this.loginid = loginid;
+	public void setLoginId(String loginId) {
+		this.loginId = loginId;
 	}
 
 	public AdminBean() {
 		super();
+	}
+
+	public AdminBean(String adminId, String firstname, String lastname, String loginId) {
+		super();
+		this.adminId = adminId;
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.loginId = loginId;
 	}
 
 }

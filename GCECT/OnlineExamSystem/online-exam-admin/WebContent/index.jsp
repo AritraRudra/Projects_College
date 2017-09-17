@@ -7,7 +7,7 @@
 <title>Login Page</title>
 </head>
 <body>
-	<form action="StudentLoginServlet" method="post">
+	<form action="LoginServlet" method="post">
 	<br><br>
 	<TABLE border=0 cellSpacing=0 cellPadding=10 width="100%" bgcolor=#ffffff align=center>
 	<tr>
@@ -46,7 +46,6 @@
 	
 		<input type="submit" value="Submit" />
 		<input type="reset" value="Reset" />
-		<input type="button" value="Abort" onClick="Abort()"/>
 	
 	</td>
 	</tr>
