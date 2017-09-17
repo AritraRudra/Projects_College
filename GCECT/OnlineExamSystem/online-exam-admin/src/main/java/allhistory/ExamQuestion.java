@@ -1,34 +1,33 @@
 package allhistory;
 
 public class ExamQuestion {
-	private int examid;
-	private int qid;
+	private int examId;
+	private int questionId;
 
 	public ExamQuestion() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ExamQuestion(int examid, int qid) {
 		super();
-		this.examid = examid;
-		this.qid = qid;
+		this.examId = examid;
+		this.questionId = qid;
 	}
 
 	public int getExamid() {
-		return examid;
+		return examId;
 	}
 
 	public void setExamid(int examid) {
-		this.examid = examid;
+		this.examId = examid;
 	}
 
 	public int getQid() {
-		return qid;
+		return questionId;
 	}
 
 	public void setQid(int qid) {
-		this.qid = qid;
+		this.questionId = qid;
 	}
 
 }

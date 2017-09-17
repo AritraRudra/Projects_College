@@ -1,17 +1,17 @@
 package login;
 
 public class AdminBean {
-	private String adminId;
+	private String userId;
 	private String firstname;
 	private String lastname;
 	private String loginId;
 
-	public String getAdminId() {
-		return adminId;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setAdminId(String adminId) {
-		this.adminId = adminId;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public String getFirstname() {
@@ -42,9 +42,9 @@ public class AdminBean {
 		super();
 	}
 
-	public AdminBean(String adminId, String firstname, String lastname, String loginId) {
+	public AdminBean(String userId, String firstname, String lastname, String loginId) {
 		super();
-		this.adminId = adminId;
+		this.userId = userId;
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.loginId = loginId;

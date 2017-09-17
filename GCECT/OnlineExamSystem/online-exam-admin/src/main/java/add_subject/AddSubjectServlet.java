@@ -1,74 +1,27 @@
 package add_subject;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import enums.SessionEnums;
+import enums.WebPagesEnumConstants;
+
+
 /**
  * Servlet implementation class AddSubjectServlet
  */
 public class AddSubjectServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private String driver;
-	private String url;
-	private String usr;
-	private String passwd;
-
-	private Connection con = null;
-	private PreparedStatement subjpstmt = null;
-
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public AddSubjectServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public void init() {
-		ServletContext context = getServletContext();
-		driver = context.getInitParameter("driver");
-		url = context.getInitParameter("url");
-		usr = context.getInitParameter("usr");
-		passwd = context.getInitParameter("passwd");
-		try {
-			Class.forName(driver);
-			con = DriverManager.getConnection(url, usr, passwd);
-
-		} catch (ClassNotFoundException e) {
-			// TODO: handle exception
-			// MUST REMOVE THESE CONSOLE MESSAGES.
-			System.out.println("init()--ERROR LOADING DRIVER");
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO: handle exception
-			System.out.println("init()--ERROR IN SQL : \n" + e.getMessage());
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("init()--ERROR DUE TO SOMETHING ELSE : \n");
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
+	private static final Logger logger = LoggerFactory.getLogger(AddSubjectServlet.class);
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -83,12 +36,12 @@ public class AddSubjectServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		String subject = request.getParameter("new_subject");
 
-		RequestDispatcher rd_success = request.getRequestDispatcher("/add_new_question.jsp");
-		RequestDispatcher rd_error = request.getRequestDispatcher("/displayerror.jsp");
+		RequestDispatcher rd_success = request.getRequestDispatcher("/"+WebPagesEnumConstants.ADD_NEW_QUESTION_PAGE.toString());
+		RequestDispatcher rd_error = request.getRequestDispatcher("/"+WebPagesEnumConstants.ERROR_PAGE);
 
 		try {
 			HttpSession session = request.getSession(true);
-			session.setAttribute("SESS_SUBJ", subject);
+			session.setAttribute(SessionEnums.SESSION_SUBJECT.toString(), subject);
 
 			rd_success.forward(request, response);
 		} catch (Exception e) {
@@ -99,13 +52,4 @@ public class AddSubjectServlet extends HttpServlet {
 		}
 	}
 
-	public void destroy() {
-		if (con != null) {
-			try {
-				con.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
 }

@@ -1,3 +1,4 @@
+<%@page import="enums.QuestionEnums"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1" session="false" import="java.util.Date"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -32,7 +33,7 @@
 		</tr>
 		<tr>
 			<td width="80" height="80"><h3>Question	:</h3></td>
-			<td width="820" height="80"><textarea name="question" rows="6" cols="80"></textarea></td>
+			<td width="820" height="80"><textarea name="<%=QuestionEnums.QUESTION.toString()%>" rows="6" cols="80"></textarea></td>
 			<td width="450" height="80"><h2>Select Level</h2><br><input type="radio" name="level"  value="Easy"><b>Easy</b><br><input type="radio" name="level" value="Hard"><b>Hard</b></td>
 		</tr>
 		<tr>
@@ -45,19 +46,19 @@
 			<table width="900" height="320">
 			<tr>
 				<td width="80" height="80"><h3>Option A)	:</h3></td>
-			<td  width="820" height="80"><textarea name="opt1" rows="4" cols="50"></textarea></td>
+			<td  width="820" height="80"><textarea name="<%=QuestionEnums.OPTION_1.toString()%>" rows="4" cols="50"></textarea></td>
 			</tr>
 			<tr>
 				<td width="80" height="80"><h3>Option B)	:</h3></td>
-			<td  width="820" height="80"><textarea name="opt2" rows="4" cols="50"></textarea></td>
+			<td  width="820" height="80"><textarea name="<%=QuestionEnums.OPTION_2.toString()%>" rows="4" cols="50"></textarea></td>
 			</tr>
 			<tr>
 				<td width="80" height="80"><h3>Option C)	:</h3></td>
-			<td  width="820" height="80"><textarea name="opt3" rows="4" cols="50"></textarea></td>
+			<td  width="820" height="80"><textarea name="<%=QuestionEnums.OPTION_3.toString()%>" rows="4" cols="50"></textarea></td>
 			</tr>
 			<tr>
 				<td width="80" height="80"><h3>Option D)	:</h3></td>
-			<td  width="820" height="80"><textarea name="opt4" rows="4" cols="50"></textarea></td>
+			<td  width="820" height="80"><textarea name="<%=QuestionEnums.OPTION_4.toString()%>" rows="4" cols="50"></textarea></td>
 			</tr>
 			</table>
 			</td>
@@ -66,7 +67,7 @@
 		</tr>
 		<tr>
 			<td width="80" height="80"><h3>Correct Option	:</h3></td>
-			<td width="820" height="80"><textarea name="corr_opt" rows="4" cols="50"></textarea></td>
+			<td width="820" height="80"><textarea name="<%=QuestionEnums.CORRECT_OPTION.toString()%>" rows="4" cols="50"></textarea></td>
 			<td width="450" height="80"></td>
 		</tr>
 		<tr>

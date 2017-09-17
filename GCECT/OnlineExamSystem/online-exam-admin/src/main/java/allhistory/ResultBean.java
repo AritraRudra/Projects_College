@@ -1,54 +1,55 @@
 package allhistory;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class ResultBean {
-	private int exam_id;
-	private int stud_id;
-	private String uname;
+	private int examId;
+	private int studentId;
+	private String userName;
 	private String subject;
 	private String level;
 	private int marks;
-	Date date_time;
+	private LocalDateTime date_time;
 
 	public ResultBean() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public ResultBean(int examId, int studId, String uname, String subject, String level, int marks, Date dateTime) {
+	public ResultBean(int examId, int studentId, String userName, String subject, String level, int marks,
+			LocalDateTime date_time) {
 		super();
-		exam_id = examId;
-		stud_id = studId;
-		this.uname = uname;
+		this.examId = examId;
+		this.studentId = studentId;
+		this.userName = userName;
 		this.subject = subject;
 		this.level = level;
 		this.marks = marks;
-		date_time = dateTime;
+		this.date_time = date_time;
 	}
 
-	public int getExam_id() {
-		return exam_id;
+	public int getExamId() {
+		return examId;
 	}
 
-	public void setExam_id(int examId) {
-		exam_id = examId;
+	public void setExamId(int examId) {
+		this.examId = examId;
 	}
 
-	public int getStud_id() {
-		return stud_id;
+	public int getStudentId() {
+		return studentId;
 	}
 
-	public void setStud_id(int studId) {
-		stud_id = studId;
+	public void setStudentId(int studentId) {
+		this.studentId = studentId;
 	}
 
-	public String getUname() {
-		return uname;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setUname(String uname) {
-		this.uname = uname;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public String getSubject() {
@@ -75,12 +76,12 @@ public class ResultBean {
 		this.marks = marks;
 	}
 
-	public Date getDate_time() {
+	public LocalDateTime getDate_time() {
 		return date_time;
 	}
 
-	public void setDate_time(Date dateTime) {
-		date_time = dateTime;
+	public void setDate_time(LocalDateTime date_time) {
+		this.date_time = date_time;
 	}
 
 }

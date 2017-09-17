@@ -28,45 +28,6 @@ public class ConfirmPageServlet extends HttpServlet {
 	private String add_question = "insert into ques(question,subject,level,opt1,opt2,opt3,opt4,corr_opt) values(?,?,?,?,?,?,?,?)";
 
 	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public ConfirmPageServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public void init() {
-		ServletContext context = getServletContext();
-		driver = context.getInitParameter("driver");
-		url = context.getInitParameter("url");
-		usr = context.getInitParameter("usr");
-		passwd = context.getInitParameter("passwd");
-		try {
-			Class.forName(driver);
-			con = DriverManager.getConnection(url, usr, passwd);
-			questpstmt = con.prepareStatement(add_question);
-		} catch (ClassNotFoundException e) {
-			System.out.println("init()--ERROR LOADING DRIVER");
-			e.printStackTrace();
-		} catch (SQLException e) {
-			System.out.println("init()--ERROR IN SQL : \n" + e.getMessage());
-			e.printStackTrace();
-		} catch (Exception e) {
-			System.out.println("init()--ERROR DUE TO SOMETHING ELSE : \n");
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
-
-	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
