@@ -18,11 +18,11 @@ import enums.AdminEnums;
 /**
  * Servlet implementation class LoginServlet
  */
-public class LoginServlet extends HttpServlet {
-	private final String className= LoginServlet.class.getName();
-	private static final Logger logger = LoggerFactory.getLogger(LoginServlet.class);
+public class AdminLoginServlet extends HttpServlet {
+	private final String className= AdminLoginServlet.class.getName();
+	private static final Logger logger = LoggerFactory.getLogger(AdminLoginServlet.class);
 	private static final long serialVersionUID = 1L;
-	String INVALID_CREDENTIALS = "INVALID COMBINATION OF USERNAME AND PASSWORD.";
+	private static final String INVALID_CREDENTIALS = "INVALID COMBINATION OF USERNAME AND PASSWORD.";
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -34,12 +34,13 @@ public class LoginServlet extends HttpServlet {
 		logger.debug("Exiting {}.{}", className,"doPost()");
 	}
 
-	public void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.debug("Entering {}.{}", className,"process()");
+		logger.debug("Request parameters : {}", request.getParameterNames());
 		String strEmail = request.getParameter("email");
-		String strPasswd = request.getParameter("passwd");
-		String strAdminid = request.getParameter("loginid");
-		String strAdminPasswd = request.getParameter("password");
+		String strPasswd = request.getParameter("password");
+		String strAdminEmailId = request.getParameter(AdminEnums.EMAIL.toString());
+		String strAdminPasswd = request.getParameter(AdminEnums.PASSWORD.toString());
 
 		RequestDispatcher rd_success = request.getRequestDispatcher("/loginsuccess.jsp");
 		RequestDispatcher rd_admin = request.getRequestDispatcher("/adminloginsuccess.jsp");
@@ -50,13 +51,13 @@ public class LoginServlet extends HttpServlet {
 		try {
 			HttpSession session = request.getSession(true);
 
-			if (strAdminid != null && strAdminPasswd != null) {
-				if (sqlUtils.isValidAdmin(strAdminid, strAdminPasswd)) {
-					AdminBean admin = sqlUtils.getAdmin(strAdminid, strAdminPasswd);
+			if (strAdminEmailId != null && strAdminPasswd != null) {
+				if (sqlUtils.isValidAdmin(strAdminEmailId, strAdminPasswd)) {
+					AdminBean admin = sqlUtils.getAdmin(strAdminEmailId, strAdminPasswd);
 					request.setAttribute(AdminEnums.USER_ADMIN.toString(), admin);
 					List<String> list = sqlUtils.getAllSubjects();
 					request.setAttribute(AdminEnums.SUBJECTS.toString(), list);
-					session.setAttribute("SESS_USER", strAdminid);
+					session.setAttribute("SESS_USER", strAdminEmailId);
 					session.setAttribute("SESS_LOGIN_TIME", new java.util.Date());
 					session.setAttribute("SESS_VALID", "true");
 					rd_admin.forward(request, response);

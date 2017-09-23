@@ -14,13 +14,14 @@ import allhistory.ResultBean;
 import login.AdminBean;
 
 public class SQLUtils {
-	private static final Logger logger = LoggerFactory.getLogger(SQLUtils.class);
+	private static final String className = SQLUtils.class.getName();
+	private static final Logger logger = LoggerFactory.getLogger(SQLUtils.class.getName());
 	private Connection connection;
 
 	private Connection con = null;
 	// private PreparedStatement psmnt=null,adminpstmt=null,subjpstmt=null;
 	private String search_student = "select uname,fstname,lstname,email from student where email=? and passwd=?";
-	private String search_admin = "select sid, uname, fstname, lstname, email from student where email=? and passwd=?";
+	private String search_admin = "select USER_ID, FIRST_NAME, LAST_NAME, EMAIL from student where EMAIL=? and PASSWORD=?";
 	private String subject = "select distinct(subject) from ques";
 
 	public boolean isValidAdmin(String strAdminid, String strAdminPasswd) throws SQLException {
@@ -31,6 +32,7 @@ public class SQLUtils {
 	}
 
 	public AdminBean getAdmin(String strAdminid, String strAdminPasswd) throws SQLException {
+		logger.debug("Entering {}.getAdmin()", className);
 		try {
 			connection = ConnectionMagager.getConnection();
 			PreparedStatement pstmnt = connection.prepareStatement(search_admin);
@@ -48,6 +50,7 @@ public class SQLUtils {
 			return null;
 		} finally {
 			closeConnection();
+			logger.debug("Exiting {}.getAdmin()", className);
 		}
 	}
 

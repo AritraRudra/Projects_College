@@ -1,6 +1,6 @@
 CREATE TABLE ONLINE_EXAM_USERS(
 	USER_ID integer not null auto_increment,
-	USER_IS_ADMIN BIT not null,
+	USER_IS_ADMIN char(1) not null,
 	FIRST_NAME varchar(30),
 	LAST_NAME varchar(50) not null,
 	EMAIL varchar(255) not null,

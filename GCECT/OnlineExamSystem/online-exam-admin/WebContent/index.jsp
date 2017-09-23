@@ -1,3 +1,4 @@
+<%@page import="enums.AdminEnums"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -7,7 +8,7 @@
 <title>Login Page</title>
 </head>
 <body>
-	<form action="LoginServlet" method="post">
+	<form action="AdminLoginServlet" method="post">
 	<br><br>
 	<TABLE border=0 cellSpacing=0 cellPadding=10 width="100%" bgcolor=#ffffff align=center>
 	<tr>
@@ -15,7 +16,7 @@
 	</tr>
 	<tr>
 	<td align=right><b><font color=#df2332 size=4>Email Address:</font></b></td>
-	<td><input type="text" name="loginid"></td>
+	<td><input type="text" name="email"></td>
 	</tr>
 	<tr>
 	<td align=right><b><font color=#df2332 size=4>Password:</font></b></td>
