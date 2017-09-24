@@ -37,17 +37,16 @@ public class AdminLoginServlet extends HttpServlet {
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.debug("Entering {}.{}", className,"process()");
 		logger.debug("Request parameters : {}", request.getParameterNames());
-		String strEmail = request.getParameter("email");
-		String strPasswd = request.getParameter("password");
 		String strAdminEmailId = request.getParameter(AdminEnums.EMAIL.toString());
 		String strAdminPasswd = request.getParameter(AdminEnums.PASSWORD.toString());
+		
+		logger.info("Param1 {}, param2 {}", strAdminEmailId, strAdminPasswd);
 
-		RequestDispatcher rd_success = request.getRequestDispatcher("/loginsuccess.jsp");
 		RequestDispatcher rd_admin = request.getRequestDispatcher("/adminloginsuccess.jsp");
 		RequestDispatcher rd_error = request.getRequestDispatcher("/displayerror.jsp");
 		RequestDispatcher rd_login_fail = request.getRequestDispatcher("/index.jsp");
 
-		SQLUtils sqlUtils = new SQLUtils();
+		final SQLUtils sqlUtils = new SQLUtils();
 		try {
 			HttpSession session = request.getSession(true);
 
@@ -57,40 +56,32 @@ public class AdminLoginServlet extends HttpServlet {
 					request.setAttribute(AdminEnums.USER_ADMIN.toString(), admin);
 					List<String> list = sqlUtils.getAllSubjects();
 					request.setAttribute(AdminEnums.SUBJECTS.toString(), list);
-					session.setAttribute("SESS_USER", strAdminEmailId);
-					session.setAttribute("SESS_LOGIN_TIME", new java.util.Date());
-					session.setAttribute("SESS_VALID", "true");
+					session.setAttribute(AdminEnums.SESSION_USER.toString(), strAdminEmailId);
+					session.setAttribute(AdminEnums.SESSION_START_TIME.toString(), new java.util.Date());
+					session.setAttribute(AdminEnums.IS_SESSION_VALID.toString(), true);
 					rd_admin.forward(request, response);
 				} else {
 					request.setAttribute(AdminEnums.ERROR_ADMIN_MSG.toString(), INVALID_CREDENTIALS);
 					// request.setAttribute(, INVALID_CREDENTIALS);
 					rd_login_fail.forward(request, response);
 				}
-			} else if (strEmail != null && strPasswd != null) {
-				if (sqlUtils.isValidStudent(strEmail, strPasswd)) {
-					rd_success.forward(request, response);
-				} else {
-					// request.setAttribute(, INVALID_CREDENTIALS);
-					request.setAttribute(AdminEnums.ERROR_STUDENT.toString(), INVALID_CREDENTIALS);
-					rd_login_fail.forward(request, response);
-				}
 			}
 		} catch (SQLException e) {
 			String errmsg = "ERROR IN SQL OPERATION : " + e.getMessage();
-			request.setAttribute(AdminEnums.ERROR_ADMIN_MSG.toString(), errmsg);
+			request.setAttribute(AdminEnums.ERROR_MSG.toString(), errmsg);
 			logger.error(errmsg);
 			rd_error.forward(request, response);
-		} catch (NullPointerException e) {
+		} catch (NullPointerException npEx) {
 			String errmsg = "INVALID COMBINATION OF USERNAME AND PASSWORD.";
 			request.setAttribute(AdminEnums.ERROR_ADMIN_MSG.toString(), errmsg);
 			request.setAttribute("ERRORMSG1", errmsg);
-			logger.error(errmsg);
+			logger.error("NullPointerException Occurred.", npEx);
 			rd_login_fail.forward(request, response);
 			// response.sendRedirect("index.jsp?MSG=INVALID COMBINATION OF USERNAME AND PASSWORD.");
 		} catch (Exception e) {
 			String errmsg = "GENERAL ERROR OCCURED." + e.getMessage();
-			request.setAttribute(AdminEnums.ERROR_ADMIN_MSG.toString(), errmsg);
-			logger.error(errmsg);
+			request.setAttribute(AdminEnums.ERROR_MSG.toString(), errmsg);
+			logger.error("Exception Occurred.", e);
 			rd_error.forward(request, response);
 			// response.sendRedirect("index.jsp?MSG=ERROR");
 		}

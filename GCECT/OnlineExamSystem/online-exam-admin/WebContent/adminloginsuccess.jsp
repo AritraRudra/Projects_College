@@ -1,10 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" session="false" import="java.util.ArrayList,java.util.Date" %>
+    pageEncoding="ISO-8859-1" session="false" import="java.util.ArrayList,java.util.Date" import="enums.AdminEnums" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%@page import="login.AdminBean"%>
+<%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="login.SubjectList"%><html>
+<%@page import="login.SubjectList"%>
+<%@page import="enums.WebPagesEnumConstants"%>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
@@ -12,19 +15,18 @@
 <body>
 	<%	
 		HttpSession session=request.getSession(false); 
-		Date logindate=(Date)session.getAttribute("SESS_LOGIN_TIME");
-		String sess_uname=(String)session.getAttribute("SESS_USER");
-		String sess_subj=(String) session.getAttribute("SESS_SUBJ");
+		Date logindate=(Date)session.getAttribute(AdminEnums.SESSION_START_TIME.toString());
+		String sess_uname=(String)session.getAttribute(AdminEnums.SESSION_USER.toString());
 		try{
 			if(sess_uname.equalsIgnoreCase("null"))
-				response.sendRedirect("index.jsp");
+				response.sendRedirect(WebPagesEnumConstants.HOME_PAGE.toString());
 		}catch(Exception e){
-			response.sendRedirect("index.jsp");
+			response.sendRedirect(WebPagesEnumConstants.HOME_PAGE.toString());
 		}
 	%>
 <form action="AdminControlServlet" method="post">
 	
-	<table height="250" width="1350" background="D:\project\header-bg.jpg" colspan="2">
+	<table height="250" width="1350" background="resources/header-bg.jpg" colspan="2">
 	<tr>
 		<td width="1000">	</td>
 		<td width="350" align="center" valign="middle" >Logged in user : <%=sess_uname %><br>Login time : <%=logindate %><br><input type="button" value="Sign out"></td>
@@ -34,21 +36,21 @@
 	<table width="1350" >
 	<tr>
 		<td width="675">
-			<%AdminBean ab=(AdminBean)request.getAttribute("ADMINISTRATOR");%>
+			<%AdminBean ab=(AdminBean)request.getAttribute(AdminEnums.USER_ADMIN.toString());%>
 			<h1>Administrator Details. . .</h1>	
 			<br><br>
 			<table width="675" align="center">
 				<tr>
-				<td width="675"><font color="" size="4"><b>Your UserId is	:	</b></font><%=ab.getAdminid() %></td>
+				<td width="675"><font color="" size="4"><b>Your UserId is	:	</b></font><%=ab.getUserId() %></td>
 				</tr>
 				<tr>
-				<td width="675"><font color="" size="4"><b>First Name	:	</b></font><%=ab.getFstname() %></td>
+				<td width="675"><font color="" size="4"><b>First Name	:	</b></font><%=ab.getFirstName() %></td>
 				</tr>
 				<tr>
-				<td width="675"><font color="" size="4"><b>Last Name	:	</b></font><%=ab.getLstname() %></td>
+				<td width="675"><font color="" size="4"><b>Last Name	:	</b></font><%=ab.getLastName() %></td>
 				</tr>
 				<tr>
-				<td width="675"><font color="" size="4"><b>Email Id	:	</b></font><%=ab.getLoginid() %></td>
+				<td width="675"><font color="" size="4"><b>Email Id	:	</b></font><%=ab.getEmail() %></td>
 				</tr>
 				<tr>
 					<td height="10" width="675"></td>
@@ -76,7 +78,7 @@
 					<td><font size="3" ><b> Select a subject to add questions. . . </b></font></td>
 				</tr>
 				<%
-					ArrayList<SubjectList> list=(ArrayList<SubjectList>)request.getAttribute("SUBJECT");
+					List<SubjectList> list=(List<SubjectList>)request.getAttribute(AdminEnums.SUBJECTS.toString());
 					for(SubjectList sl: list){
 				%>
 				<tr>

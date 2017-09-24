@@ -16,11 +16,11 @@
 	</tr>
 	<tr>
 	<td align=right><b><font color=#df2332 size=4>Email Address:</font></b></td>
-	<td><input type="text" name="email"></td>
+	<td><input type="text" name="<%= AdminEnums.EMAIL.toString() %>"></td>
 	</tr>
 	<tr>
 	<td align=right><b><font color=#df2332 size=4>Password:</font></b></td>
-	<td><input type="password" name="password"></td>
+	<td><input type="password" name="<%= AdminEnums.PASSWORD.toString() %>"></td>
 	</tr>
 	
 	</TABLE>
@@ -36,7 +36,7 @@
 			if(!(errmsg1.equalsIgnoreCase("null")))
 		%>	 				
 		 <label><font color="red">
-		 	<%=  "INVALID COMBINATION OF USERNAME AND PASSWORD." %>
+		 	<%=  "INVALID COMBINATION OF USER NAME AND PASSWORD." %>
 		 </font></label> <br><br>	
 		<%	}catch(Exception e){
 		%>

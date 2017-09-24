@@ -3,7 +3,7 @@ CREATE TABLE ONLINE_EXAM_USERS(
 	USER_IS_ADMIN char(1) not null,
 	FIRST_NAME varchar(30),
 	LAST_NAME varchar(50) not null,
-	EMAIL varchar(255) not null,
+	EMAIL varchar(255) unique not null,
 	PASSWORD varchar(255) not null,
 	primary key (USER_ID)
 );

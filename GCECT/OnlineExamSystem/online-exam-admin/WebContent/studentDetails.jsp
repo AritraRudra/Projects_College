@@ -46,9 +46,9 @@
 			{
 		%>
 				<tr>
-					<td><%=rb.getExam_id() %></td>
-					<td><%=rb.getStud_id() %></td>
-					<td><%=rb.getUname() %></td>
+					<td><%=rb.getExamId() %></td>
+					<td><%=rb.getStudentId() %></td>
+					<td><%=rb.getUserName() %></td>
 					<td><%=rb.getSubject() %></td>
 					<td><%=rb.getLevel() %></td>
 					<td><%=rb.getMarks() %></td>

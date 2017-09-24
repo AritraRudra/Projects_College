@@ -1,3 +1,4 @@
+<%@page import="enums.AdminEnums"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -7,7 +8,7 @@
 <title>Try Again</title>
 </head>
 <body>
-	<h1><%= request.getAttribute("ERRORMSG") %></h1>
+	<h1><%= request.getAttribute(AdminEnums.ERROR_MSG.toString()) %></h1>
 	<h2><%= "Please Try Again" %></h2>
 </body>
 </html>

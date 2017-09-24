@@ -1,6 +1,7 @@
 package enums;
 
 public enum WebPagesEnumConstants {
+	HOME_PAGE("index.jsp"),
 	ADD_NEW_QUESTION_PAGE("add_new_question.jsp"),
 	ERROR_PAGE("displayerror.jsp");
 	private String pageEnum;

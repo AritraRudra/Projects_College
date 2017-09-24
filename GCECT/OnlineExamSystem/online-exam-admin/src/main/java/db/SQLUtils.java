@@ -18,51 +18,63 @@ public class SQLUtils {
 	private static final Logger logger = LoggerFactory.getLogger(SQLUtils.class.getName());
 	private Connection connection;
 
-	private Connection con = null;
 	// private PreparedStatement psmnt=null,adminpstmt=null,subjpstmt=null;
-	private String search_student = "select uname,fstname,lstname,email from student where email=? and passwd=?";
-	private String search_admin = "select USER_ID, FIRST_NAME, LAST_NAME, EMAIL from student where EMAIL=? and PASSWORD=?";
-	private String subject = "select distinct(subject) from ques";
+	private String search_student = "select uname,fstname,lstname,email from ONLINE_EXAM_USERS where email=? and passwd=?";
+	private String search_admin = "select USER_ID, FIRST_NAME, LAST_NAME from ONLINE_EXAM_USERS where EMAIL=? and PASSWORD=?";
+	private String subject = "select distinct(SUBJECT) from ONLINE_EXAM_QUESTIONS";
 
-	public boolean isValidAdmin(String strAdminid, String strAdminPasswd) throws SQLException {
-		if (getAdmin(strAdminid, strAdminPasswd) != null)
+	public boolean isValidAdmin(String strEmailId, String strAdminPasswd) throws SQLException {
+		logger.debug("Entering {}.isValidAdmin()", className);
+		if (getAdmin(strEmailId, strAdminPasswd) != null)
 			return true;
 		else
 			return false;
 	}
 
-	public AdminBean getAdmin(String strAdminid, String strAdminPasswd) throws SQLException {
+	public AdminBean getAdmin(String emailId, String password) throws SQLException {
 		logger.debug("Entering {}.getAdmin()", className);
 		try {
 			connection = ConnectionMagager.getConnection();
+			//connection = ConnectionMagager.getConnectionUsingHardCodedCredentialsTemporarily();
 			PreparedStatement pstmnt = connection.prepareStatement(search_admin);
-			pstmnt.setString(1, strAdminid);
-			pstmnt.setString(2, strAdminPasswd);
+			pstmnt.setString(1, emailId);
+			pstmnt.setString(2, password);
+			logger.debug("Starting to execute query {}", pstmnt.toString());
 			ResultSet rs = pstmnt.executeQuery();
+			logger.debug("Successfully executed query {}", pstmnt.toString());
 			if (rs.next()) {
-				String adminid = rs.getString(1);
-				String fname = rs.getString(2);
-				String lname = rs.getString(3);
-				String emailid = rs.getString(4);
-				AdminBean admin = new AdminBean(adminid, fname, lname, emailid);
+				logger.debug("Inside resultset");
+				int userId = rs.getInt(1);
+				String firstName = rs.getString(2);
+				String lastName = rs.getString(3);
+				AdminBean admin = new AdminBean(userId, firstName, lastName, emailId);
+				closeResultSet(rs);
+				closePreparedStatement(pstmnt);
 				return admin;
 			}
 			return null;
+		}catch( SQLException sqlEx){
+			logger.error("Exception occurred.", sqlEx);
+			throw sqlEx;
 		} finally {
 			closeConnection();
 			logger.debug("Exiting {}.getAdmin()", className);
 		}
 	}
 
+
 	public List<String> getAllSubjects() throws SQLException {
 		try {
 			connection = ConnectionMagager.getConnection();
+			//connection = ConnectionMagager.getConnectionUsingHardCodedCredentialsTemporarily();
 			PreparedStatement pstmnt = connection.prepareStatement(subject);
 			ResultSet rs = pstmnt.executeQuery();
 			List<String> subjectList = new ArrayList<String>();
 			while (rs.next()) {
 				subjectList.add(rs.getString(1));
 			}
+			closeResultSet(rs);
+			closePreparedStatement(pstmnt);
 			return subjectList;
 		} finally {
 			closeConnection();
@@ -108,6 +120,27 @@ public class SQLUtils {
 	public List<ResultBean> getAllExamHistory() throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	private void closePreparedStatement(PreparedStatement pstmnt) {
+		if (pstmnt != null) {
+			try {
+				pstmnt.close();
+			} catch (SQLException sqlEx) {
+				logger.error(sqlEx.getMessage(), sqlEx);
+			}
+		}
+	}
+
+	private void closeResultSet(ResultSet resultSet) {
+		if (resultSet != null) {
+			try {
+				resultSet.close();
+			} catch (SQLException sqlEx) {
+				logger.error(sqlEx.getMessage(), sqlEx);
+			}
+		}
+
 	}
 
 	private void closeConnection() {
